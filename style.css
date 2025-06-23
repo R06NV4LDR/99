@@ -1,86 +1,108 @@
-
-
 :root {
-/** LIGHT THEME */
---background: #78a4bf;
---on-background: #6ab37d;
---primary: #506937;
---on-primary: #18578e;
---accent: #ef9e07;
---font: #4a3c3c;
---light: #f3eaea;
+  --background: #78a4bf;
+  --on-background: #6ab37d;
+  --primary: #506937;
+  --on-primary: #18578e;
+  --accent: #ef9e07;
+  --font: #dedede;
+  --font2: #4a3c3c;
+  --light: #f3eaea;
 }
 
 [data-theme="dark"] {
-    /** DARK THEME */
-    --background: #061425;
-    --on-background: #f3eaea;
-    --primary: #7cfc00;
-    --on-primary: #000000;
-    --accent: #ef9e07;
-    --font: #f3eaea;
+  --background: #061425;
+  --on-background: #f3eaea;
+  --primary: #7cfc00;
+  --on-primary: #000000;
+  --accent: #ef9e07;
+  --font: #f3eaea;
 }
 
-
-body, html {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-    margin: 0;
-    padding: 0;
-    background: linear-gradient(var(--background), var(--on-background));
-    height: 100%;
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: var(--background);
+  color: var(--font);
+  overflow: hidden;
 }
 
-header {
-    background: linear-gradient(var(--primary),var(--on-primary));
-    color: var(--light);
-    padding: 10px 20px;
-    text-align: justify;
-    
-    top: 0;
-    position: fixed;
-    width: 100%;
-    opacity: 0.6
-}
-.background-grid {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url("/IMG_2616.jpg");
-    background-size: cover;
-    opacity: 0.2;
-    z-index: 0;
+.container {
+  text-align: center;
+  padding: 10vh 2rem;
+  backdrop-filter: blur(8px);
+  background-color: rgba(255, 255, 255, 0.064);
+  border-radius: 16px;
+  margin: auto;
+  max-width: 600px;
+  animation: fadeIn 2s ease-in-out;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  background-size: 100%;
+  background-position: center;
 }
 
 h1 {
-    color: var(--font);
-    text-align: center;
-    padding: 20px 0;
+  font-size: 3rem;
+  color: var(--primary);
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 h2 {
-    color: var(--font);
-    text-align: center;
-    padding: 15px 0;
+  color: var(--accent);
+  text-shadow: 20px 20px 40px rgb(255, 0, 0);
+  font-weight: 500;
 }
 
-h3 {
-    color: var(--font);
-    text-align: center;
-    padding: 10px 0;
+#countdown {
+  font-size: 2rem;
+  color: var(--light);
+  margin-top: 2rem;
 }
 
-footer {
-    background: linear-gradient(var(--primary),var(--on-primary));
-    color: var(--light);
-    padding: 10px 20px;
-    text-align: justify;
-    bottom: 0;
-    position: fixed;
-    width: 100%;
-    opacity: 0.6;
+.toggle-theme {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: var(--accent);
+  color: var(--on-primary);
+  border: none;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 8px;
 }
 
+.rocket {
+  position: absolute;
+  font-size: 2rem;
+  color: var(--accent);
+animation: float 10s linear forwards;
+  user-select: none;
+}
 
+@keyframes float {
+  from {
+    transform: translateY(100vh) rotate(320deg);
+    opacity: 0.5;
+  }
+  to {
+    transform: translateY(-0vh) rotate(315deg);
+    opacity: 2;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+#animated-a path {
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  animation: draw 2s ease forwards;
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
