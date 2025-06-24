@@ -1,6 +1,7 @@
 {
   "name": "W99",
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "firebase": "^11.9.1",
     "xlsx": "^0.18.5"
   }
