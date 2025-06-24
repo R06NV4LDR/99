@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hochzeit RSVP</title>
+  <script type="module" src="event.js"></script>
+</head>
+<body>
+  <h1>HOCHZEIT</h1>
+  <div id="event-details"></div>
+
+  <form id="rsvp-form">
+    <label>
+      Nimmst du teil?
+      <select name="attending" required>
+        <option value="">Bitte wählen</option>
+        <option value="yes">Ja</option>
+        <option value="no">Nein</option>
+      </select>
+    </label><br>
+
+    <label>
+      Anzahl Gäste:
+      <input type="number" name="guests" min="1" max="5" value="1" required />
+    </label><br>
+
+    <label>
+      Allergien / Hinweise:
+      <input type="text" name="allergies" />
+    </label><br>
+
+    <button type="submit">RSVP senden</button>
+  </form>
+</body>
+</html>

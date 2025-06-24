@@ -1,48 +1,48 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { firebaseConfig } from "./config.js"; // Assuming you have a config.js file for Firebase config
-const firebaseConfig = {
-  apiKey: "YOUR_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID"
-};
+import { firebaseConfig } from "./config.js"; // your actual config.js file
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 const db = getFirestore(app);
 
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    window.location.href = "login.html";
-    return;
-  }
+// Get ?login=xyz
+const params = new URLSearchParams(window.location.search);
+const login = params.get("login");
 
-  const userRef = doc(db, "users", user.uid);
-  const userSnap = await getDoc(userRef);
+if (!login) {
+  alert("Ungültiger Zugriff – kein Login gefunden.");
+  window.location.href = "index.html";
+}
 
-  if (!userSnap.exists()) {
-    alert("Invite not found.");
-    return;
-  }
+// Fetch guest by login
+const guestRef = doc(db, "Guests", login);
+const guestSnap = await getDoc(guestRef);
 
-  const data = userSnap.data();
-  const container = document.getElementById("event-details");
-// TODO: Event details should be dynamically loaded from Firestore
-  if (data.eventA) container.innerHTML += `<p>🎉 You're invited to <strong>Event A</strong>!</p>`;
-  if (data.eventB) container.innerHTML += `<p>🍾 You're invited to <strong>Event B</strong>!</p>`;
+if (!guestSnap.exists()) {
+  alert("Gast nicht gefunden.");
+  window.location.href = "index.html";
+}
 
-  document.getElementById("rsvp-form").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const form = e.target;
-    const rsvpData = {
-      attending: form.attending.value,
-      guests: parseInt(form.guests.value),
-      allergies: form.allergies.value,
-      timestamp: new Date()
-    };
+const guest = guestSnap.data();
+const container = document.getElementById("event-details");
+container.innerHTML = `
+  <p>👋 Willkommen, ${guest.g1_firstname}${guest.g2_firstname ? " & " + guest.g2_firstname : ""}</p>
+  <p>Einladung für:</p>
+  ${guest.invite06 ? "<p>🌿 Samstag (06.09)</p>" : ""}
+  ${guest.invite09 ? "<p>🥂 Dienstag (09.09)</p>" : ""}
+`;
 
-    await setDoc(doc(db, "rsvps", user.uid), rsvpData);
-    alert("RSVP submitted. Thank you!");
-  });
+document.getElementById("rsvp-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const form = e.target;
+
+  const rsvpData = {
+    attending: form.attending.value,
+    guests: parseInt(form.guests.value),
+    allergies: form.allergies.value,
+    updated: new Date()
+  };
+
+  await setDoc(doc(db, "rsvps", login), rsvpData);
+  alert("Danke für deine Rückmeldung!");
 });
