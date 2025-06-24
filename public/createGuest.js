@@ -1,13 +1,7 @@
-import * as XLSX from 'xlsx/node';
-import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, serverTimestamp } from "firebase/firestore";
-
-// Firebase config
-const firebaseConfig = {
-  apiKey: "...",
-  authDomain: "...",
-  projectId: "..."
-};
+const XLSX = require("xlsx");
+const { initializeApp } = require("firebase/app");
+const { getFirestore, collection, addDoc, serverTimestamp } = require("firebase/firestore");
+const { firebaseConfig } = require("./config.js");
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -18,8 +12,8 @@ function createLogin(g1, g2) {
   return safe(g1) + safe(g2);
 }
 
-// Read XLSX
-const workbook = XLSX.readFile("guests.xlsx");
+// Read Excel
+const workbook = XLSX.readFile("Guestlist.xlsx");
 const sheet = workbook.Sheets[workbook.SheetNames[0]];
 const rows = XLSX.utils.sheet_to_json(sheet, { defval: "" });
 
@@ -27,12 +21,17 @@ async function importGuests() {
   for (const row of rows) {
     const g1 = row["Vorname 1"];
     const g2 = row["Vorname 2"];
-    const invite06 = row["06.09.2025"] === true;
-    const invite09 = row["09.09.2025"] === true;
+
+    const toBool = (v) => String(v).toLowerCase().trim() === "true"; 
+    const invite06 = toBool(row["06.09.2025"]);
+    const invite09 = toBool(row["09.09.2025"]);
 
     const guest = {
       g1_firstname: g1,
       g2_firstname: g2,
+      plus_one_allowed: g2 === "",
+      plus_one_name: "",
+      plus_one_foodinfos: "",
       login: createLogin(g1, g2),
       contact: "",
       passw: "",
@@ -47,9 +46,9 @@ async function importGuests() {
 
     try {
       await addDoc(collection(db, "Guests"), guest);
-      console.log(`✔ Added: ${guest.login}`);
-    } catch (e) {
-      console.error(`❌ Error adding ${guest.login}:`, e);
+      console.log(`✔ Imported: ${guest.login}`);
+    } catch (err) {
+      console.error(`❌ Failed to import ${guest.login}`, err);
     }
   }
 }
