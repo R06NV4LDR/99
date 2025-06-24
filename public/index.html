@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Event Info</title>
+  <style>
+    body { font-family: sans-serif; padding: 1em; }
+    .event { border: 1px solid #ccc; border-radius: 8px; padding: 1em; margin: 1em 0; }
+  </style>
+</head>
+<body>
+  <h1>Our Wedding Events 💍</h1>
+  <div id="event-list"></div>
+
+  <!-- Firebase -->
+  <script type="module">
+    import { firebaseConfig} from "./config.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // ✅ Replace this with your own config
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Fetch and render events
+    async function loadEvents() {
+      const eventList = document.getElementById("event-list");
+      const querySnapshot = await getDocs(collection(db, "Events"));
+
+      querySnapshot.forEach((doc) => {
+        const event = doc.data();
+        const div = document.createElement("div");
+        div.className = "event";
+        div.innerHTML = `
+          <h2>${event.title}</h2>
+          <p><strong>Date:</strong> ${new Date(event.date.seconds * 1000).toLocaleString()}</p>
+          <p><strong>Location:</strong> ${event.location}</p>
+          <p><strong>Dresscode:</strong> ${event.dresscode}</p>
+          <p>${event.description}</p>
+        `;
+        eventList.appendChild(div);
+      });
+    }
+
+    loadEvents();
+  </script>
+</body>
+</html>

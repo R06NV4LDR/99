@@ -20,89 +20,47 @@
 
 body {
   margin: 0;
-  font-family: 'Segoe UI', sans-serif;
+  padding: 2rem;
+  font-family: sans-serif;
   background-color: var(--background);
   color: var(--font);
-  overflow: hidden;
 }
 
-.container {
-  text-align: center;
-  padding: 10vh 2rem;
-  backdrop-filter: blur(8px);
-  background-color: rgba(255, 255, 255, 0.064);
-  border-radius: 16px;
-  margin: auto;
-  max-width: 600px;
-  animation: fadeIn 2s ease-in-out;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  background-size: 100%;
-  background-position: center;
+h1, h2, h3 {
+  color: var(--on-background);
 }
 
-h1 {
-  font-size: 3rem;
-  color: var(--primary);
+form {
+  background-color: var(--light);
+  color: var(--font2);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  max-width: 500px;
+}
+
+input, select, textarea, button {
+  display: block;
+  margin-top: 0.5rem;
   margin-bottom: 1rem;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-h2 {
-  color: var(--accent);
-  text-shadow: 20px 20px 40px rgb(255, 0, 0);
-  font-weight: 500;
-}
-
-#countdown {
-  font-size: 2rem;
-  color: var(--light);
-  margin-top: 2rem;
-}
-
-.toggle-theme {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: var(--accent);
-  color: var(--on-primary);
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
   border: none;
-  padding: 0.5rem 1rem;
+  font-size: 1rem;
+}
+
+button {
+  background-color: var(--primary);
+  color: var(--on-primary);
   font-weight: bold;
   cursor: pointer;
-  border-radius: 8px;
 }
 
-.rocket {
-  position: absolute;
-  font-size: 2rem;
-  color: var(--accent);
-animation: float 10s linear forwards;
-  user-select: none;
+button:hover {
+  background-color: var(--accent);
+  color: var(--on-primary);
 }
 
-@keyframes float {
-  from {
-    transform: translateY(100vh) rotate(320deg);
-    opacity: 0.5;
-  }
-  to {
-    transform: translateY(-0vh) rotate(315deg);
-    opacity: 2;
-  }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-#animated-a path {
-  stroke-dasharray: 200;
-  stroke-dashoffset: 200;
-  animation: draw 2s ease forwards;
-}
-
-@keyframes draw {
-  to {
-    stroke-dashoffset: 0;
-  }
+#error-msg {
+  color: red;
 }

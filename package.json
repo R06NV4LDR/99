@@ -1,0 +1,7 @@
+{
+  "name": "W99",
+  "dependencies": {
+    "firebase": "^11.9.1",
+    "xlsx": "^0.18.5"
+  }
+}
