@@ -1,7 +1,9 @@
-const XLSX = require("xlsx");
-const { initializeApp } = require("firebase/app");
-const { getFirestore, collection, addDoc, serverTimestamp } = require("firebase/firestore");
-const { firebaseConfig } = require("./config.js");
+import XLSX from "xlsx";
+import bcrypt from "bcryptjs";
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { firebaseConfig } from "./config.js";
+import fs from "fs";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -26,6 +28,10 @@ async function importGuests() {
     const invite06 = toBool(row["06.09.2025"]);
     const invite09 = toBool(row["09.09.2025"]);
 
+    const login = createLogin(g1, g2);
+    const passwordPlain = login + "25"; // Beispiel-Passwort
+    const hashedPassword = bcrypt.hashSync(passwordPlain, 10);
+
     const guest = {
       g1_firstname: g1,
       g2_firstname: g2,
@@ -43,8 +49,8 @@ async function importGuests() {
       RSVP06: false,
       RSVP09: false,
       contact: "",
-      login: createLogin(g1, g2),
-      passw: "",
+      login,
+      passw: hashedPassword,
       confirmed: false,
       g1_allergies: "",
       g2_allergies: "",
@@ -52,10 +58,9 @@ async function importGuests() {
       last_updated: serverTimestamp()
     };
 
-
     try {
       await addDoc(collection(db, "Guests"), guest);
-      console.log(`✔ Imported: ${guest.login}`);
+      console.log(`✔ Imported: ${guest.login} (pw: ${passwordPlain})`);
     } catch (err) {
       console.error(`❌ Failed to import ${guest.login}`, err);
     }
