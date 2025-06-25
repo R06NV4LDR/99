@@ -1,4 +1,3 @@
-// event.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
   getFirestore,
@@ -47,11 +46,16 @@ async function loadGuestAndEvents(login) {
       return;
     }
 
-    const eventsSnapshot = await getDocs(collection(db, "events"));
+    const eventsSnapshot = await getDocs(collection(db, "Events"));
     const allEvents = eventsSnapshot.docs.map(doc => doc.data());
 
+    console.log("📦 Events geladen:", allEvents);
+    console.log("👤 Erlaubte Titel:", allowed);
+    console.log("📦 Alle Events:", allEvents.map(e => `"${e.title}"`));
+
+
     const filtered = allEvents.filter(event =>
-      allowed.includes(event.title?.toLowerCase().trim())
+      allowed.map(t => t.toLowerCase().trim()).includes(event.title?.toLowerCase().trim())
     );
 
     if (filtered.length === 0) {
