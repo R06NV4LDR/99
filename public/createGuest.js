@@ -1,20 +1,22 @@
 import XLSX from "xlsx";
 import bcrypt from "bcryptjs";
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, serverTimestamp } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 import { firebaseConfig } from "./config.js";
-import fs from "fs";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Helper to create login
 function createLogin(g1, g2) {
   const safe = (n) => (n || "").trim().toLowerCase().slice(0, 3);
   return safe(g1) + safe(g2);
 }
 
-// Read Excel
 const workbook = XLSX.readFile("Guestlist.xlsx");
 const sheet = workbook.Sheets[workbook.SheetNames[0]];
 const rows = XLSX.utils.sheet_to_json(sheet, { defval: "" });
@@ -23,14 +25,12 @@ async function importGuests() {
   for (const row of rows) {
     const g1 = row["Vorname 1"];
     const g2 = row["Vorname 2"];
+    const login = createLogin(g1, g2);
+    const password = bcrypt.hashSync("dyft5h", 10); // Beispielpasswort
 
     const toBool = (v) => String(v).toLowerCase().trim() === "true";
     const invite06 = toBool(row["06.09.2025"]);
     const invite09 = toBool(row["09.09.2025"]);
-
-    const login = createLogin(g1, g2);
-    const passwordPlain = login + "25"; // Beispiel-Passwort
-    const hashedPassword = bcrypt.hashSync(passwordPlain, 10);
 
     const guest = {
       g1_firstname: g1,
@@ -50,17 +50,17 @@ async function importGuests() {
       RSVP09: false,
       contact: "",
       login,
-      passw: hashedPassword,
+      passw: password,
       confirmed: false,
       g1_allergies: "",
       g2_allergies: "",
       plus_one_allergies: "",
-      last_updated: serverTimestamp()
+      last_updated: serverTimestamp(),
     };
 
     try {
       await addDoc(collection(db, "Guests"), guest);
-      console.log(`✔ Imported: ${guest.login} (pw: ${passwordPlain})`);
+      console.log(`✔ Imported: ${guest.login}`);
     } catch (err) {
       console.error(`❌ Failed to import ${guest.login}`, err);
     }
