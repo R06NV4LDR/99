@@ -46,3 +46,9 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
     errorMsg.textContent = "Ein Fehler ist aufgetreten: " + (err.message || err);
   }
 });
+
+// Theme toggle
+function toggleTheme() {
+  const html = document.documentElement;
+  html.dataset.theme = html.dataset.theme === "dark" ? "light" : "dark";
+}

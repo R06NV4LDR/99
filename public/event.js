@@ -111,3 +111,10 @@ function showTab(index) {
   allButtons[index].classList.add("active");
   allTabs[index].classList.add("active");
 }
+
+// Theme toggle
+function toggleTheme() {
+  const html = document.documentElement;
+  html.dataset.theme = html.dataset.theme === "dark" ? "light" : "dark";
+}
+
