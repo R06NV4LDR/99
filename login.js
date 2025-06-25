@@ -40,7 +40,7 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
     }
 
     console.log("✅ Login erfolgreich:", username);
-    window.location.href = `/public/event.html?login=${username}`;
+    window.location.href = `/event.html?login=${username}`;
   } catch (err) {
     console.error("🔥 Fehler beim Login:", err);
     errorMsg.textContent = "Ein Fehler ist aufgetreten: " + (err.message || err);
