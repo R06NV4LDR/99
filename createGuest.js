@@ -6,11 +6,22 @@ async function importGuests() {
     const g1 = row["Vorname 1"];
     const g2 = row["Vorname 2"];
     const login = createLogin(g1, g2);
-    const password = "dyft5h"; // 🔓 Passwort im Klartext (nicht gehasht)
+
 
     const toBool = (v) => String(v).toLowerCase().trim() === "true";
     const invite06 = toBool(row["06.09.2025"]);
     const invite09 = toBool(row["09.09.2025"]);
+
+    // Erzeugt ein 6-stelliges zufälliges Passwort (nur Buchstaben/Zahlen)
+    function generatePassword(length = 6) {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let pass = '';
+      for (let i = 0; i < length; i++) {
+        pass += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return pass;
+    }
+    const password = generatePassword();
 
     const guest = {
       g1_firstname: g1,
