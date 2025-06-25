@@ -1,23 +1,3 @@
-import XLSX from "xlsx";
-import bcrypt from "bcryptjs";
-import { initializeApp } from "firebase/app";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  serverTimestamp,
-} from "firebase/firestore";
-import { firebaseConfig } from "./config.js";
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-function createLogin(g1, g2) {
-  const safe = (n) => (n || "").trim().toLowerCase().slice(0, 3);
-  return safe(g1) + safe(g2);
-}
-
-const workbook = XLSX.readFile("Guestlist.xlsx");
 const sheet = workbook.Sheets[workbook.SheetNames[0]];
 const rows = XLSX.utils.sheet_to_json(sheet, { defval: "" });
 
@@ -26,7 +6,7 @@ async function importGuests() {
     const g1 = row["Vorname 1"];
     const g2 = row["Vorname 2"];
     const login = createLogin(g1, g2);
-    const password = bcrypt.hashSync("dyft5h", 10); // Beispielpasswort
+    const password = "dyft5h"; // 🔓 Passwort im Klartext (nicht gehasht)
 
     const toBool = (v) => String(v).toLowerCase().trim() === "true";
     const invite06 = toBool(row["06.09.2025"]);
@@ -50,7 +30,7 @@ async function importGuests() {
       RSVP09: false,
       contact: "",
       login,
-      passw: password,
+      passw: password, // 🔓 hier unverschlüsselt
       confirmed: false,
       g1_allergies: "",
       g2_allergies: "",
