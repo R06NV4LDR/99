@@ -17,8 +17,8 @@ Thumbs.db
 # Excel and data files
 Guestlist.xlsx
 
-# Firebase config (if not public)
-public/config.js
+# Firebase config
+config.js
 
 # Build output
 dist/
