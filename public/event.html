@@ -4,122 +4,65 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Deine Einladung</title>
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-    import { firebaseConfig } from "./config.js";
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    const container = document.body.appendChild(document.createElement("div"));
-    container.innerHTML = "<p>Lade Einladung...</p>";
-
-    // ✅ Helper: URL-Parameter extrahieren
-    function getQueryParam(name) {
-      return new URLSearchParams(window.location.search).get(name)?.toLowerCase();
-    }
-
-    const login = getQueryParam("login");
-    if (!login) {
-      container.innerHTML = "<p>🚫 Kein Benutzer angegeben.</p>";
-    } else {
-      loadGuestAndEvents(login);
-    }
-
-    async function loadGuestAndEvents(login) {
-      try {
-        // 🔍 Gast finden
-        const guestsSnapshot = await getDocs(collection(db, "Guests"));
-        const guestDoc = guestsSnapshot.docs.find(doc => doc.data().login.toLowerCase() === login);
-
-        if (!guestDoc) {
-          container.innerHTML = `<p>❌ Benutzer "${login}" nicht gefunden.</p>`;
-          return;
-        }
-
-        const guest = guestDoc.data();
-        const allowed = [];
-        if (guest.invite06) allowed.push("Hochzeitsfest");
-        if (guest.invite09) allowed.push("Standesamt");
-
-        if (allowed.length === 0) {
-          container.innerHTML = "<p>🚫 Du hast keine gültige Einladung.</p>";
-          return;
-        }
-
-        // 📦 Events laden
-        const eventsSnapshot = await getDocs(collection(db, "events"));
-        const filtered = eventsSnapshot.docs
-          .map(doc => doc.data())
-          .filter(event => allowed.includes(event.title));
-
-        if (filtered.length === 0) {
-          container.innerHTML = "<p>Keine Events gefunden.</p>";
-          return;
-        }
-
-        container.innerHTML = "";
-        filtered.forEach(event => {
-          const div = document.createElement("div");
-          div.className = "event";
-          div.innerHTML = `
-  <h2>${event.title}</h2>
-  ${event.EventInfo ? `<p class="event-info">💌 ${event.EventInfo}</p>` : ""}
-  ${event.date ? `<p>📅 <strong>Datum:</strong> ${new Date(event.date.seconds * 1000).toLocaleString("de-CH")}</p>` : ""}
-  ${event.Anmeldeschluss ? `<p>📌 <strong>Anmeldeschluss:</strong> ${new Date(event.Anmeldeschluss.seconds * 1000).toLocaleString("de-CH")}</p>` : ""}
-  ${event.location ? `<p>📍 <strong>Ort:</strong> ${event.location}</p>` : ""}
-  ${event.address ? `<p>🏠 <strong>Adresse:</strong> ${event.address}</p>` : ""}
-  ${event.plz ? `<p>🏷️ <strong>PLZ:</strong> ${event.plz}</p>` : ""}
-  ${event.dresscode ? `<p>👗 <strong>Dresscode:</strong> ${event.dresscode}</p>` : ""}
-  ${event.description ? `<p>📝 <strong>Beschreibung:</strong> ${event.description}</p>` : ""}
-  ${event.Programm?.length ? `
-    <div class="section">
-      <strong>📋 Programm:</strong>
-      <ul>${event.Programm.map(p => `<li>${p}</li>`).join("")}</ul>
-    </div>` : ""}
-  ${event.ProgrammInfo ? `<p>🎤 <strong>Info zur Unterhaltung:</strong> ${event.ProgrammInfo}</p>` : ""}
-  ${event.Anfahrt?.length ? `
-    <div class="section">
-      <strong>🚗 Anfahrt:</strong>
-      <ul>${event.Anfahrt.map(p => `<li>${p}</li>`).join("")}</ul>
-    </div>` : ""}
-  ${event.BaselSBB?.[0] ? `<p>🚆 <a href="${event.BaselSBB[0]}" target="_blank">SBB-Verbindung anzeigen</a></p>` : ""}
-  ${event.map ? `<p>🗺️ <a href="${event.map}" target="_blank">Karte anzeigen</a></p>` : ""}
-`;
-          container.appendChild(div);
-
-        });
-
-      } catch (err) {
-        console.error(err);
-        container.innerHTML = "<p>🔥 Fehler beim Laden der Einladung.</p>";
-      }
-    }
-  </script>
-  <style>
-    body {
-      font-family: sans-serif;
-      background: #f8f8f8;
-      padding: 2rem;
-    }
-
-    h2 {
-      margin-top: 0;
-    }
-
-    a {
-      color: #007BFF;
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-  </style>
+  <title>Unsere Hochzeit</title>
 </head>
 
-<body></body>
 
-</html>
+<body>
+  <h1>🎉 Deine Einladung</h1>
+  
+  <div id="tabs" style="display:none;">
+    <div id="tab-buttons" class="tab-buttons"></div>
+    <div id="tab-content" class="tab-content"></div>
+  </div>
+  
+  <div id="events-container">
+    <p>Lade Einladung...</p>
+  </div>
+  
+  <link rel="icon" href="./favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="./styles.css">
+  
+  
+  <!-- <style>
+    .tab-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      }
+    .tab-button {
+      padding: 0.5rem 1rem;
+      background: #eee;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      }
+      .tab-button.active {
+        background: #007BFF;
+        color: white;
+        }
+        .tab-content > div {
+          display: none;
+          }
+          .tab-content > div.active {
+            display: block;
+            }
+            .event {
+              background: #fff;
+              padding: 1.5rem;
+              margin-bottom: 1rem;
+              border-left: 5px solid #007BFF;
+              border-radius: 6px;
+              box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+              }
+              .event h2 {
+                margin-top: 0;
+                font-size: 1.5rem;
+                color: #007BFF;
+                }
+              </style>  -->
+              <script type="module" src="./event.js"></script>
+              
+            </body>
+            </html>
