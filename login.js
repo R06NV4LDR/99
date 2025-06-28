@@ -6,6 +6,7 @@ import { firebaseConfig } from "./config.js";
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+
 document.getElementById("login-form").addEventListener("submit", async (e) => {
   e.preventDefault();
 

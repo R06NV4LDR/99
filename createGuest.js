@@ -1,3 +1,6 @@
+// Load the XLSX library and read the workbook before accessing sheets
+const XLSX = require('xlsx');
+const workbook = XLSX.readFile('Guestlist1.xlsx'); // Replace with your actual file path
 const sheet = workbook.Sheets[workbook.SheetNames[0]];
 const rows = XLSX.utils.sheet_to_json(sheet, { defval: "" });
 
@@ -14,7 +17,7 @@ async function importGuests() {
 
     // Erzeugt ein 6-stelliges zufälliges Passwort (nur Buchstaben/Zahlen)
     function generatePassword(length = 6) {
-      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@!?#*';
       let pass = '';
       for (let i = 0; i < length; i++) {
         pass += chars.charAt(Math.floor(Math.random() * chars.length));
