@@ -1,6 +1,6 @@
 import { guest } from "./event.js"; // nutzt bereits geladenen Gast
 
-const container = document.getElementById("rsvpContainer");
+const container = document.getElementById("rsvp-container");
 
 if (!guest) {
     container.innerHTML = "<p>⚠️ Gastdaten fehlen. Bitte erneut einloggen.</p>";

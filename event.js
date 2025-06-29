@@ -2,14 +2,14 @@ import { getGuest } from "./guest.js";
 import { fetchEventsForGuest } from "./fetchEvents.js";
 
 // global holen
-const login = sessionStorage.getItem("login");
+const login = localStorage.getItem("login");
 const guest = await getGuest(login);
 const events = await fetchEventsForGuest(guest);
 
 // direkt an window weitergeben (optional)
 window.guest = guest;
 
-const container = document.getElementById("eventContainer");
+const container = document.getElementById("events-container");
 
 events.forEach(event => {
   const eventDiv = document.createElement("div");
