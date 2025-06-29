@@ -2,54 +2,43 @@
 <html lang="de">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Deine Einladung</title>
-  <link rel="stylesheet" href="./styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Satisfy&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Caveat&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&family=Quicksand&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="icon" href="./favicon.ico" type="image/x-icon" />
 
-  <link rel="icon"
-    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💒</text></svg>">
-
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Satisfy&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand&display=swap" rel="stylesheet" />
 </head>
 
 <body>
   <header>
-    <div class="header-content">
-      <h1>Wir laden Dich herzlich zu unserer Hochzeit ein! </h1>
-      <!-- <button class="toggle-theme" onclick="toggleTheme()">Theme wechseln</button> -->
-
+    <div class="header-container">
+      <h1 class="header-title">Willkommen</h1>
+      <p class="header-subtitle">--------</p>
     </div>
   </header>
-  <div class="content-container">
-    <article class="content" id="info">
-      <h2><br>
-        Wenn Du dabei sein kannst, freut uns das riesig. <br>
-        Bitte melde Dich so schnell wie möglich an- oder ab, spätestens aber bis am 08.08.2025. <br>
-        <br>
-        Das Anmeldefenster und alle zusätzlichen Infos findest Du weiter unten. <br>
-        <br>
-        Wir freuen uns auf ein grossartiges Fest, hoffentlich auch mit Dir! <br>
-        <br>
-      </h2>
-      <div>
-        <h1>Anouk und Ronny</h1>
-      </div>
-    </article>
-  </div>
-  </div>
-  </div>
-  <div id="events">
-    <div id="events-container">
-      <p>Lade Einladung...</p>
+
+  <main class="main-container">
+    <div class="content-container">
+      <article class="content" id="info"></article>
     </div>
-  </div>
-  <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    <section id="events">
+      <div id="events-container">
+        <p>Lade Einladung...</p>
+      </div>
+      <div id="rsvp-container"></div>
+    </section>
+  </main>
+
+  <!-- Wichtig: keine compat-Versionen mehr laden! -->
+  <!-- Firebase-Module werden direkt in event.js & rsvp.js geladen -->
 
   <script type="module" src="./event.js"></script>
   <script type="module" src="./rsvp.js"></script>

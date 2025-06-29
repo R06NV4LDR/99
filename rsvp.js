@@ -1,85 +1,77 @@
-// rsvp.js
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { firebaseConfig } from "./config.js";
-import { guest } from "./event.js";
+import { guest } from "./event.js"; // nutzt bereits geladenen Gast
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const container = document.getElementById("rsvpContainer");
 
-document.addEventListener("DOMContentLoaded", () => {
-  if (!guest) return;
+if (!guest) {
+    container.innerHTML = "<p>⚠️ Gastdaten fehlen. Bitte erneut einloggen.</p>";
+} else {
+    const events = [];
 
-  const events = document.querySelectorAll(".event");
+    if (guest.invite06) {
+        events.push({
+            title: "Hochzeitsfest",
+            date: "Samstag, 6. September 2025",
+            keys: ["g1_attending06", "g2_attending06", "plus_one_attending06"],
+        });
+    }
 
-  events.forEach(eventDiv => {
-    const eventTitle = eventDiv.querySelector("h2")?.textContent?.trim();
-    if (!eventTitle) return;
+    if (guest.invite09) {
+        events.push({
+            title: "Standesamt",
+            date: "Dienstag, 9. September 2025",
+            keys: ["g1_attending09", "g2_attending09", "plus_one_attending09"],
+        });
+    }
 
-    const hasPlusOne = guest.plus_one_allowed;
-    const hasPartner = guest.g2_firstname?.trim();
-    const showSecond = hasPartner || hasPlusOne;
+    if (events.length === 0) {
+        container.innerHTML = "<p>🚫 Du bist zu keinem Event eingeladen.</p>";
+    } else {
+        events.forEach(event => {
+            const section = document.createElement("section");
+            section.classList.add("rsvp-block");
 
-    const form = document.createElement("form");
-    form.classList.add("rsvp-form");
+            const title = `<h2>${event.title}</h2><p>${event.date}</p>`;
+            let form = "<form>";
 
-    form.innerHTML = `
-      <fieldset>
-        <legend>Deine Antwort für "${eventTitle}"</legend>
-        <label>
-          <input type="checkbox" name="g1" />
-          ${guest.g1_firstname} nimmt teil
-        </label><br>
+            if (guest.g1_firstname) {
+                form += `<label>${guest.g1_firstname} kommt: <input type="checkbox" data-key="${event.keys[0]}" ${guest[event.keys[0]] ? "checked" : ""}></label><br>`;
+            }
 
-        ${showSecond ? `
-          <label>
-            <input type="checkbox" name="g2" />
-            ${hasPartner ? guest.g2_firstname : "+1"} nimmt teil
-          </label><br>
-          ${!hasPartner && hasPlusOne ? `
-            <input type="text" name="plus_one_name" placeholder="Name +1" />
-          ` : ""}
-        ` : ""}
+            if (guest.g2_firstname) {
+                form += `<label>${guest.g2_firstname} kommt: <input type="checkbox" data-key="${event.keys[1]}" ${guest[event.keys[1]] ? "checked" : ""}></label><br>`;
+            }
 
-        <textarea name="comment" placeholder="Kommentar (optional)" rows="2" style="width: 100%;"></textarea><br>
-        <button type="submit">Antwort absenden</button>
-        <p class="status" style="color: green;"></p>
-      </fieldset>
-    `;
+            if (guest.plus_one_allowed) {
+                form += `<label>Plus 1 (${guest.plus_one_name || "Name folgt"}) kommt: <input type="checkbox" data-key="${event.keys[2]}" ${guest[event.keys[2]] ? "checked" : ""}></label><br>`;
+            }
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+            form += `<button type="submit">Antwort speichern</button></form>`;
+            section.innerHTML = title + form;
+            container.appendChild(section);
 
-      const attending1 = form.querySelector('input[name="g1"]').checked;
-      const attending2 = showSecond ? form.querySelector('input[name="g2"]')?.checked || false : null;
-      const plusOneName = !hasPartner && hasPlusOne ? form.querySelector('input[name="plus_one_name"]').value.trim() : "";
-      const comment = form.querySelector('textarea[name="comment"]').value.trim();
+            section.querySelector("form").addEventListener("submit", async e => {
+                e.preventDefault();
+                const { doc, updateDoc, getFirestore } = await import("https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js");
+                const db = getFirestore();
+                const guestRef = doc(db, "guests", guest.id);
 
-      const response = {
-        login: guest.login,
-        event: eventTitle,
-        g1_attending: attending1,
-        g2_attending: attending2,
-        plus_one_name: plusOneName || null,
-        comment,
-        timestamp: serverTimestamp()
-      };
+                const updates = {};
+                section.querySelectorAll("input[type=checkbox]").forEach(input => {
+                    updates[input.dataset.key] = input.checked;
+                    guest[input.dataset.key] = input.checked;
+                });
 
-      try {
-        await addDoc(collection(db, "rsvp_responses"), response);
-        form.querySelector(".status").textContent = "✅ Antwort gespeichert.";
-      } catch (err) {
-        console.error("RSVP Fehler:", err);
-        form.querySelector(".status").textContent = "❌ Fehler beim Speichern.";
-        form.querySelector(".status").style.color = "red";
-      }
-    });
+                try {
+                    updates.login = guest.login;
+                    updates.passw = guest.passw;
+                    await updateDoc(guestRef, updates);
+                    alert("✅ Antwort gespeichert!");
+                } catch (err) {
+                    console.error(err);
+                    alert("❌ Fehler beim Speichern.");
+                }
 
-    eventDiv.appendChild(form);
-  });
-});
+            });
+        });
+    }
+}

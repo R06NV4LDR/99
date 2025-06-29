@@ -9,19 +9,32 @@
 <body data-theme="light">
   <header>
     <h1>Willkommen zum Event Login</h1>
-     <button class="toggle-theme" onclick="toggleTheme()">Toggle Theme</button>
-  <h1>Event Login</h1>
-  <form id="login-form">
-    <input type="text" id="username" placeholder="Benutzername" required />
-    <input type="password" id="password" placeholder="Passwort" required />
-    <button type="submit">Login</button>
-  </form>
-  <p id="error-msg"></p>
+    <button class="toggle-theme" onclick="toggleTheme()">🌗 Theme wechseln</button>
+  </header>
 
-  <script type="module" src="login.js"></script>
+  <main>
+    <h2>Event Login</h2>
+
+    <form id="login-form">
+      <input type="text" id="username" placeholder="Benutzername" autocomplete="username" required />
+      <input type="password" id="password" placeholder="Passwort" autocomplete="current-password" required />
+      <button type="submit">Login</button>
+    </form>
+
+    <p id="error-msg" style="color: red; font-weight: bold;"></p>
+  </main>
 
   <footer>
     <p>© 2025 R^B – <a href="mailto:ronnyb339@hotmail.com">Kontakt</a></p>
   </footer>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      html.dataset.theme = html.dataset.theme === "dark" ? "light" : "dark";
+    }
+  </script>
+
+  <script type="module" src="login.js"></script>
 </body>
 </html>

@@ -1,29 +1,22 @@
-import { getFirestore, collection, getDocs } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  query,
+  where
+} from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { firebaseConfig } from "./config.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
 
-const db = getFirestore();
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-// Fetch all events
-async function fetchEvents() {
-  const querySnapshot = await getDocs(collection(db, "events"));
-  const events = [];
-  querySnapshot.forEach((doc) => {
-    events.push({ id: doc.id, ...doc.data() });
-  });
-  return events;
+// nur Events laden, für die der Gast eingeladen ist
+export async function fetchEventsForGuest(guest) {
+  const q = query(
+    collection(db, "events"),
+    where("invitees", "array-contains", guest.login)
+  );
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
-
-// Display in DOM
-fetchEvents().then(events => {
-  const container = document.getElementById("event-list");
-  events.forEach(event => {
-    const el = document.createElement("div");
-    el.innerHTML = `
-      <h3>${event.title}</h3>
-      <p><strong>Date:</strong> ${new Date(event.date).toLocaleString()}</p>
-      <p><strong>Location:</strong> ${event.location}</p>
-      <p><strong>Dress Code:</strong> ${event.dressCode}</p>
-      <p>${event.description}</p>
-    `;
-    container.appendChild(el);
-  });
-});
